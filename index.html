@@ -14,7 +14,15 @@
     var lander;
     var blocks;
     var message = "";
+    var time = 0;
     
+    function timer() {
+        time += 0.01; 
+        time = Math.round(time*100)/100;
+        output = "Time: " + time;
+        stats.innerHTML = output;
+    }
+
     function Lander(){
         tLander = new Sprite(scene, "lander.png", 25, 25);
         tLander.setPosition(74, 470);
@@ -27,30 +35,30 @@
         tLander.checkKeys = function(){
             this.setImage(this.imgDefault);
             if (keysDown[K_UP]){
+<<<<<<< HEAD
 				document.getElementById("instructions").style.display = 'none';
                 this.setImage(this.imgThrust);
 			    this.addVector(this.getImgAngle(), .01);
+=======
+              document.getElementById("instructions").style.display = 'none';
+              this.setImage(this.imgThrust);
+              this.addVector(this.getImgAngle() - 90, .1);
+              if (time <= 0) {
+                var interval = setInterval(timer, 39);
+              }
+>>>>>>> origin/master
             } // end if
             
             if (keysDown[K_LEFT]){
-			    this.changeImgAngleBy(-3)
+              this.changeImgAngleBy(-3)
             } // end if
             
             if (keysDown[K_RIGHT]){
-			    this.changeImgAngleBy(3)
+              this.changeImgAngleBy(3)
             } // end if
             
         } // end checkKeys
         
-        tLander.showStats = function(){
-            //displays stats
-            output = "DX: " + Math.round(this.dx * 10) + "<br />";
-            output += "DY: " + Math.round(this.dy * 10) + "<br />";
-            output += "ALT: " + Math.round(525 - this.y) + "<br />"
-            output += "MSG: " + message;
-            
-            stats.innerHTML = output;
-        } // end showStats
         
         tLander.checkBlock = function(block){
           if (this.collidesWith(block)) {
@@ -169,6 +177,11 @@
         lander = new Lander();
         blocks = new Array();
 
+<<<<<<< HEAD
+=======
+        document.getElementById('stats').innerHTML = "Time: 0.00";
+
+>>>>>>> origin/master
         var map = generateMap(sceneX, sceneY, blockSize);
         prepareMap(map);
         var xLim = sceneX/blockSize;
@@ -211,7 +224,6 @@
     function update(){
         scene.clear();
         lander.checkKeys();
-        lander.showStats();
         updateBlocks();
         
 		loading.update();
