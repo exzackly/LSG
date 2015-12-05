@@ -15,8 +15,11 @@
     var blocks;
     var message = "";
     var time = 0;
+    var lowTime = '---';
+    var timer;
+    var timing = false;
     
-    function timer() {
+    function timerFunction() {
         time += 0.01; 
         time = Math.round(time*100)/100;
         output = "Time: " + time;
@@ -38,10 +41,13 @@
               document.getElementById("instructions").style.display = 'none';
               this.setImage(this.imgThrust);
               this.addVector(this.getImgAngle() - 90, .1);
-              if (time <= 0) {
-                var interval = setInterval(timer, 39);
+              if (timing == false) {
+                time = 0;
+                timer = setInterval(timerFunction, 10);
+                timing = true;
               }
             } // end if
+
             
             if (keysDown[K_LEFT]){
               this.changeImgAngleBy(-3)
@@ -160,6 +166,15 @@
 
     }
 
+    function endGame() {
+      clearInterval(timer);
+      if (lowTime == '---' || lowTime > time) {
+        lowTime = time;
+        timing = false;
+      }
+      lander.setSpeed(0);
+    }
+
     function init(){		
         scene = new Scene();
         scene.setSize(sceneX, sceneY);
@@ -207,6 +222,7 @@
           if(blocks[i].type == 2) {
             document.getElementById('instructions').innerHTML = "Success!";
             document.getElementById('instructions').style.display = 'block';
+            endGame();
           } else if (blocks[i].type == 1) {
             location.reload();
           }
@@ -219,12 +235,21 @@
         lander.checkKeys();
         updateBlocks();
         
-		loading.update();
+        document.getElementById('lowTime').innerHTML = 'Best Time: ' + lowTime;
+        loading.update();
         lander.update();
     } // end update
     
     </script>
     <style type="text/css">
+        #lowTime {
+            position: absolute;
+            font-family: monospace;
+            left: 50px;
+            top: 70px;
+            z-index: 999;
+            color: white;
+        }
         #stats {
             position: absolute;
             font-family: monospace;
@@ -245,6 +270,7 @@
 </head>
 <body onload = "init()">
     <div id = "stats"></div>
+    <div id = "lowTime"></div>
 	<div id = "instructions">PRESS UP ON THE KEY PAD TO START...</div>
 </body>
 </html>
