@@ -37,7 +37,7 @@
             if (keysDown[K_UP]){
               document.getElementById("instructions").style.display = 'none';
               this.setImage(this.imgThrust);
-              this.addVector(this.getImgAngle() - 90, .1);
+              this.addVector(this.getImgAngle(), .01);
               if (time <= 0) {
                 var interval = setInterval(timer, 39);
               }
