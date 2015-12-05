@@ -64,10 +64,11 @@
     
     function Block(x, y, type){
         if (type == 2) {
-          tBlock = new Sprite(scene, "winBlock.png", 50, 50);
+          tBlock = new Sprite(scene, "winBlock.png", blockSize, blockSize);
         } else {
-          tBlock = new Sprite(scene, "platform.png", 50, 50);
+          tBlock = new Sprite(scene, "platform.png", blockSize*.5, blockSize*.5);
         }
+        tBlock.type = type;
         tBlock.setSpeed(0);
         tBlock.setPosition(x,y);
         
@@ -141,17 +142,29 @@
           }
         }
       }
-      printMap(map);
       return map;
+    }
+
+    function prepareMap(map) {
+        map[0][19] = 2;
+        fillAdjacent(map,0,19);
+        
+        map[9][0] = -1;
+        fillAdjacent(map,9,0);
+        map[9][2] = -1;
+        fillAdjacent(map,9,2);
+        map[9][3] = -1;
+        fillAdjacent(map,9,3);
+
     }
 
     function init(){		
         scene = new Scene();
         scene.setSize(sceneX, sceneY);
         scene.setBG("black");
-		loading = new Sprite(scene, "loading.png", 200, 25);
-		loading.setSpeed(0);
-		loading.setPosition(115, 470);
+        loading = new Sprite(scene, "loading.png", 200, 25);
+        loading.setSpeed(0);
+        loading.setPosition(115, 470);
 		
         lander = new Lander();
         blocks = new Array();
@@ -159,15 +172,20 @@
 
 
         var map = generateMap(sceneX, sceneY, blockSize);
-        map[0][19] = 2;
-        fillAdjacent(map,0,19);
+        prepareMap(map);
         var xLim = sceneX/blockSize;
         var yLim = sceneY/blockSize;
         for (var i = 0; i < yLim; i++) {
           for (var j = 0; j < xLim; j++) {
-            if (map[i][j] > 0) {
-              blocks.push(new Block(blockSize/2 + j*blockSize,
+            if (map[i][j] == 2) {
+              blocks.push(new Block(
+                    blockSize/2 + j*blockSize,
                     blockSize/2 + i*blockSize,
+                    map[i][j]));
+            } else if (map[i][j] > 0) {
+              blocks.push(new Block(
+                    blockSize/2 + j*blockSize + (Math.random()-0.5)*12,
+                    blockSize/2 + i*blockSize + (Math.random()-0.5)*12,
                     map[i][j]));
             }
           }
@@ -184,7 +202,12 @@
       for (var i = 0; i < blocks.length; i++) {
         blocks[i].update();
         if (lander.checkBlock(blocks[i])) {
-          //location.reload();
+          if(blocks[i].type == 2) {
+            document.getElementById('instructions').innerHTML = "Success!";
+            document.getElementById('instructions').style.display = 'block';
+          } else if (blocks[i].type == 1) {
+            location.reload();
+          }
         }
       }
     }
