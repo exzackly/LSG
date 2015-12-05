@@ -19,17 +19,17 @@
         tLander = new Sprite(scene, "lander.png", 25, 25);
         tLander.setPosition(74, 470);
         tLander.setSpeed(0);
-        tLander.setAngle(0);
-        tLander.setImgAngle(90);
+        tLander.setImgAngle(0);
         tLander.imgDefault = "lander.png";
         tLander.imgThrust = "landerThrust.png";
+		tLander.setBoundAction(BOUNCE);
         
         tLander.checkKeys = function(){
             this.setImage(this.imgDefault);
             if (keysDown[K_UP]){
 				document.getElementById("instructions").style.display = 'none';
                 this.setImage(this.imgThrust);
-			    this.addVector(this.getImgAngle() - 90, .1);
+			    this.addVector(this.getImgAngle(), .01);
             } // end if
             
             if (keysDown[K_LEFT]){
@@ -169,8 +169,6 @@
         lander = new Lander();
         blocks = new Array();
 
-
-
         var map = generateMap(sceneX, sceneY, blockSize);
         prepareMap(map);
         var xLim = sceneX/blockSize;
@@ -191,8 +189,6 @@
           }
         }
 
-        for (var i = 0; i < 3; i++) {
-        }
         stats = document.getElementById("stats");
         
         scene.start();
