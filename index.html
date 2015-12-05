@@ -9,7 +9,7 @@
     
     var scene;
     var lander;
-    var platform;
+    var blocks;
     var message = "";
     
     function Lander(){
@@ -58,63 +58,90 @@
             stats.innerHTML = output;
         } // end showStats
         
-        tLander.checkLanding = function(){
-          if (this.falling){
-            if (this.y > 525){
-              if (this.x < platform.x + 10){
-                if (this.x > platform.x - 10){
-                  if (this.dx < .2){
-                    if (this.dx > -.2){
-                      if (this.dy < 2){
-                        this.setSpeed(0);
-                        this.falling = false;
-                        message = "Nice Landing!";
-                      } else {
-                        message = "too much vertical speed";
-                      } // end if
-                    } else {
-                        message = "too fast to left";
-                    } // end if
-                  } else {
-                    message = "too fast to right";
-                  } // end if                    
-                } // end 'x too big' if
-              } // end 'x too small' if
-            } // end 'y not big enough' if
-          } // end 'are we falling?' if
-        } // end checkLanding
+        tLander.checkBlock = function(block){
+          if (this.collidesWith(block)) {
+            message = "Oi!";
+            return true;
+          }
+        } // end checkBlock
         
         return tLander;
     } // end Lander constructor
     
-    function Platform(){
-        tPlatform = new Sprite(scene, "platform.png", 50, 10);
-        tPlatform.setSpeed(0);
-        x = Math.random() * scene.width;
-        tPlatform.setPosition(x,550);
+    function Block(x,y){
+        tBlock = new Sprite(scene, "platform.png", 50, 50);
+        tBlock.setSpeed(0);
+        tBlock.setPosition(x,y);
         
-        return tPlatform;
+        return tBlock;
     } // end platform constructor
     
+    function printMap(map) {
+      for (var i = 0; i < map.length; i++) {
+        console.log(map[i]);
+      }
+    }
+
+    function fillAdjacent(map, i, j) {
+      
+    }
+
+    function generateMap(xSize, ySize, blockSize) {
+      var map = new Array();
+      var yLim = ySize/blockSize;
+      var xLim = xSize/blockSize;
+      for (var i = 0; i < yLim; i++) {
+        var row = new Array();
+        for (var j = 0; j < xLim; j++) {
+           row.push(0); 
+        }
+        map.push(row);
+      }
+
+      for (var i = 0; i < yLim; i++) {
+        for (var j = 0; j < xLim; j++) {
+          if (map[i][j] == 0) {
+            map[i][j] == 1;
+          }
+        }
+      }
+
+      return map;
+    }
+
     function init(){
         scene = new Scene();
+        scene.setSize(1000, 500);
         scene.setBG("black");
         lander = new Lander();
-        platform = new Platform();
+        blocks = new Array();
+
+        var map = generateMap(1000, 500, 50);
+        for (var i = 0; i < 3; i++) {
+          blocks.push(new Block(25+i*100, 25));
+        }
         stats = document.getElementById("stats");
         
         scene.start();
     } // end ini
+
+    function updateBlocks() {
+      for (var i = 0; i < blocks.length; i++) {
+        blocks[i].update();
+        if (lander.checkBlock(blocks[i])) {
+          location.reload();
+        }
+      }
+    }
     
     function update(){
         scene.clear();
         lander.checkGravity();
         lander.checkKeys();
         lander.showStats();
-        lander.checkLanding();
+        updateBlocks();
         
         lander.update();
-        platform.update();
     } // end update
     
     </script>
@@ -130,6 +157,6 @@
     </style>
 </head>
 <body onload = "init()">
-    <div id = "stats">DX: 0, DY: 0, Alt: 550</div>
+    <div id = "stats"></div>
 </body>
 </html>
