@@ -35,18 +35,12 @@
         tLander.checkKeys = function(){
             this.setImage(this.imgDefault);
             if (keysDown[K_UP]){
-<<<<<<< HEAD
-				document.getElementById("instructions").style.display = 'none';
-                this.setImage(this.imgThrust);
-			    this.addVector(this.getImgAngle(), .01);
-=======
               document.getElementById("instructions").style.display = 'none';
               this.setImage(this.imgThrust);
               this.addVector(this.getImgAngle() - 90, .1);
               if (time <= 0) {
                 var interval = setInterval(timer, 39);
               }
->>>>>>> origin/master
             } // end if
             
             if (keysDown[K_LEFT]){
@@ -177,11 +171,8 @@
         lander = new Lander();
         blocks = new Array();
 
-<<<<<<< HEAD
-=======
         document.getElementById('stats').innerHTML = "Time: 0.00";
 
->>>>>>> origin/master
         var map = generateMap(sceneX, sceneY, blockSize);
         prepareMap(map);
         var xLim = sceneX/blockSize;
