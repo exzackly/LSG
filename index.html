@@ -17,6 +17,7 @@
     
     function Lander(){
         tLander = new Sprite(scene, "lander.png", 25, 25);
+        tLander.setPosition(74, 470);
         tLander.setSpeed(0);
         tLander.setAngle(0);
         tLander.setImgAngle(90);
@@ -26,16 +27,17 @@
         tLander.checkKeys = function(){
             this.setImage(this.imgDefault);
             if (keysDown[K_UP]){
+				document.getElementById("instructions").style.display = 'none';
                 this.setImage(this.imgThrust);
-				this.addVector(this.getImgAngle() - 90, .1);
+			    this.addVector(this.getImgAngle() - 90, .1);
             } // end if
             
             if (keysDown[K_LEFT]){
-				this.changeImgAngleBy(-3)
+			    this.changeImgAngleBy(-3)
             } // end if
             
             if (keysDown[K_RIGHT]){
-				this.changeImgAngleBy(3)
+			    this.changeImgAngleBy(3)
             } // end if
             
         } // end checkKeys
@@ -143,10 +145,14 @@
       return map;
     }
 
-    function init(){
+    function init(){		
         scene = new Scene();
         scene.setSize(sceneX, sceneY);
         scene.setBG("black");
+		loading = new Sprite(scene, "loading.png", 200, 25);
+		loading.setSpeed(0);
+		loading.setPosition(115, 470);
+		
         lander = new Lander();
         blocks = new Array();
 
@@ -189,6 +195,7 @@
         lander.showStats();
         updateBlocks();
         
+		loading.update();
         lander.update();
     } // end update
     
@@ -202,9 +209,18 @@
             z-index: 999;
             color: white;
         }
+        #instructions {
+            position: absolute;
+            font-family: monospace;
+            left: 400px;
+            top: 250px;
+            z-index: 999;
+            color: white;
+        }
     </style>
 </head>
 <body onload = "init()">
     <div id = "stats"></div>
+	<div id = "instructions">PRESS UP ON THE KEY PAD TO START...</div>
 </body>
 </html>
