@@ -7,15 +7,19 @@
     <script type="text/javascript">
     
     var scene;
+    var sceneX = 1000;
+    var sceneY = 500;
+    var blockSize = 50;
+    var blockDensity = 0.2;
     var lander;
     var blocks;
     var message = "";
     
     function Lander(){
-        tLander = new Sprite(scene, "lander.png", 50, 50);
+        tLander = new Sprite(scene, "lander.png", 25, 25);
         tLander.setSpeed(0);
-		tLander.setAngle(0);
-		tLander.setImgAngle(90);
+        tLander.setAngle(0);
+        tLander.setImgAngle(90);
         tLander.imgDefault = "lander.png";
         tLander.imgThrust = "landerThrust.png";
         
@@ -56,8 +60,12 @@
         return tLander;
     } // end Lander constructor
     
-    function Block(x,y){
-        tBlock = new Sprite(scene, "platform.png", 50, 50);
+    function Block(x, y, type){
+        if (type == 2) {
+          tBlock = new Sprite(scene, "winBlock.png", 50, 50);
+        } else {
+          tBlock = new Sprite(scene, "platform.png", 50, 50);
+        }
         tBlock.setSpeed(0);
         tBlock.setPosition(x,y);
         
@@ -71,7 +79,42 @@
     }
 
     function fillAdjacent(map, i, j) {
-      
+      if (i < map.length-1) {
+        map[i+1][j] = -1;
+        if (j > 0)
+          map[i+1][j-1] = -1;
+        if (j < map[0].length-1)
+          map[i+1][j+1] = -1;
+      }
+
+      if (i > 0) {
+        map[i-1][j] = -1;
+        if (j > 0)
+          map[i-1][j-1] = -1;
+        if (j < map[0].length-1)
+          map[i-1][j+1] = -1;
+      }
+
+      if (j < map[0].length-1) {
+        map[i][j+1] = -1;
+      }
+      if (j > 0) {
+        map[i][j-1] = -1;
+      }
+    }
+
+    function fillSubsequent(map, i, j) {
+      if (i < map.length-1) {
+        map[i+1][j] = -1;
+        if (j > 0)
+          map[i+1][j-1] = -1;
+        if (j < map[0].length-1)
+          map[i+1][j+1] = -1;
+      }
+
+      if (j < map[0].length-1) {
+        map[i][j+1] = -1;
+      }
     }
 
     function generateMap(xSize, ySize, blockSize) {
@@ -89,24 +132,42 @@
       for (var i = 0; i < yLim; i++) {
         for (var j = 0; j < xLim; j++) {
           if (map[i][j] == 0) {
-            map[i][j] == 1;
+            if (Math.random() < blockDensity) {
+            map[i][j] = 1;
+            fillSubsequent(map, i, j);
+            }
           }
         }
       }
-
+      printMap(map);
       return map;
     }
 
     function init(){
         scene = new Scene();
-        scene.setSize(1000, 500);
+        scene.setSize(sceneX, sceneY);
         scene.setBG("black");
         lander = new Lander();
         blocks = new Array();
 
-        var map = generateMap(1000, 500, 50);
+
+
+        var map = generateMap(sceneX, sceneY, blockSize);
+        map[0][19] = 2;
+        fillAdjacent(map,0,19);
+        var xLim = sceneX/blockSize;
+        var yLim = sceneY/blockSize;
+        for (var i = 0; i < yLim; i++) {
+          for (var j = 0; j < xLim; j++) {
+            if (map[i][j] > 0) {
+              blocks.push(new Block(blockSize/2 + j*blockSize,
+                    blockSize/2 + i*blockSize,
+                    map[i][j]));
+            }
+          }
+        }
+
         for (var i = 0; i < 3; i++) {
-          blocks.push(new Block(25+i*100, 25));
         }
         stats = document.getElementById("stats");
         
@@ -117,7 +178,7 @@
       for (var i = 0; i < blocks.length; i++) {
         blocks[i].update();
         if (lander.checkBlock(blocks[i])) {
-          location.reload();
+          //location.reload();
         }
       }
     }
